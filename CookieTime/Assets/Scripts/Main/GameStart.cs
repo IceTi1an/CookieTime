@@ -12,7 +12,7 @@ namespace Game
 
             DontDestroyOnLoad(gameObject);
 
-            /*_gameStateChanger.ChangeState(new MainMenu_State());*/
+            _gameStateChanger.ChangeState(new MainMenuState());
         }
     }
 }
