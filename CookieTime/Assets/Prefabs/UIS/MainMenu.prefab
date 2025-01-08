@@ -764,9 +764,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5b75d2eca324fbf468c5411e737ac86f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _playButton: {fileID: 8955870757684154158}
-  _exitButton: {fileID: 7075044911838242644}
-  _shopButton: {fileID: 8557551288543420035}
+  playButton: {fileID: 8955870757684154158}
+  exitButton: {fileID: 7075044911838242644}
+  shopButton: {fileID: 8557551288543420035}
 --- !u!1 &5555755570770667555
 GameObject:
   m_ObjectHideFlags: 0
