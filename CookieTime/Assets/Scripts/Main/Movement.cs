@@ -1,53 +1,61 @@
-using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace Game
 {
+    [System.Serializable]
+    public struct ColliderSettings
+    {
+        public Vector2 offset;
+        public Vector2 size;
+    }
+
     public class Movement : MonoBehaviour
     {
-        private Joystick joystick;
         private Rigidbody2D rb;
         private bool facingRight = true;
         private bool isGrounded;
-        
-        [SerializeField] private float _speed;
-        [SerializeField] private float _jumpForce;
+        private bool isCrouching;
+        private bool canStand;
+        private BoxCollider2D boxCollider;
+
+        [SerializeField] private Joystick _joystick;
+        [SerializeField] private Button _jumpButton;
+        [SerializeField] private Button _crouchButton;
+        [SerializeField] private float _speed = 3f;
+        [SerializeField] private float _jumpForce = 5f;
         [SerializeField] private float _moveInput;
-        [SerializeField] private Transform footPosition;
-        [SerializeField] private float checkRadius;
-        [SerializeField] private LayerMask whatIsGround;
+        [SerializeField] private Transform _footPosition;
+        [SerializeField] private Transform _headPosition;
+        [SerializeField] private float _checkRadius = 0.3f;
+        [SerializeField] private float _standUpCheckHeight = 2.0f;
+        [SerializeField] private LayerMask _groundLayer;
         [SerializeField] private Animator _animator;
+
+        public ColliderSettings normalSettings;
+        public ColliderSettings crouchSettings;
 
         private void Start()
         {
             rb = GetComponent<Rigidbody2D>();
+            boxCollider = GetComponent<BoxCollider2D>();
         }
 
         private void Update()
         {
-            isGrounded = Physics2D.OverlapCircle(footPosition.position, checkRadius, whatIsGround);
+            CheckGround();
 
-            if (isGrounded == true && Input.GetKeyDown(KeyCode.Space))
-            {
-                rb.linearVelocity = Vector2.up * _jumpForce;
-                _animator.SetTrigger("takeOf");
-            }
-            if (isGrounded == true)
-            {
-                _animator.SetBool("IsJumping", false);
-            }
-            else
-            {
-                _animator.SetBool("IsJumping", true);
-            }
-        }
+            _moveInput = _joystick.Horizontal;
 
-        private void FixedUpdate()
-        {
-            _moveInput = Input.GetAxis("Horizontal");
-            rb.linearVelocity = new Vector2(_moveInput * _speed, rb.linearVelocityY);
+            canStand = CanStandUp();
+            _animator.SetBool("canStand", canStand);
 
             _animator.SetFloat("Speed", Mathf.Abs(_moveInput));
+
+            if (_moveInput > 0)
+            {
+                _animator.SetBool("isRunning", true);
+            }
 
             if (facingRight == false && _moveInput > 0)
             {
@@ -57,6 +65,27 @@ namespace Game
             {
                 Flip();
             }
+
+            if (isCrouching)
+            {
+                ApplyColliderSettings(crouchSettings);
+            }
+            else
+            {
+                ApplyColliderSettings(normalSettings);
+            }
+        }
+
+        private void FixedUpdate()
+        {
+            rb.linearVelocity = new Vector2(_moveInput * _speed, rb.linearVelocityY);
+        }
+
+        private bool CanStandUp()
+        {
+            Vector2 checkPosition = transform.position + Vector3.up * _standUpCheckHeight;
+            float checkRadius = 0.3f;
+            return !Physics2D.OverlapCircle(checkPosition, checkRadius, _groundLayer);
         }
 
         private void Flip()
@@ -65,6 +94,58 @@ namespace Game
             Vector2 Scaler = transform.localScale;
             Scaler.x *= -1;
             transform.localScale = Scaler;
+        }
+
+        private void CheckGround()
+        {
+            isGrounded = Physics2D.OverlapCircle(_footPosition.position, _checkRadius, _groundLayer);
+
+            if (isGrounded == true)
+            {
+                _animator.SetBool("IsJumping", false);
+            }
+            else
+            {
+                _animator.SetBool("IsJumping", true);
+            }
+        }
+        private void ApplyColliderSettings (ColliderSettings settings)
+        {
+            boxCollider.offset = settings.offset;
+            boxCollider.size = settings.size;
+        }
+        public void PressCrouchButton()
+        {
+            if (isCrouching)
+            {
+                if (CanStandUp())
+                {
+                    isCrouching = false;
+                    ApplyColliderSettings(normalSettings);
+                    _animator.SetTrigger("StandUp");
+                }
+                else return;
+            }
+            else
+            {
+                isCrouching = true;
+                ApplyColliderSettings(crouchSettings);
+                _animator.SetTrigger("Crouch");
+            }
+
+            _animator.SetBool("isCrouching", isCrouching);
+        }
+
+
+        public void PressJumpButton()
+        {
+            if (isGrounded)
+            {
+                rb.linearVelocity = new Vector2(rb.linearVelocity.x, _jumpForce);
+                _animator.SetTrigger("takeOf");
+                _animator.SetBool("isRunning", Mathf.Abs(_moveInput) > 0);
+                _animator.SetBool("isCrouching", isCrouching);
+            }
         }
     }
 }

@@ -46,7 +46,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _allUIs:
   - {fileID: 3173910361446776231, guid: 2fdc66190b040af4296044f944f95751, type: 3}
-  - {fileID: 273110140720568161, guid: f8f36445cdce19148b20ce5775724734, type: 3}
+  - {fileID: 471095864079001680, guid: 024cb435f12f9f64f88e0e479db90628, type: 3}
 --- !u!1 &2310215117701621701
 GameObject:
   m_ObjectHideFlags: 0
