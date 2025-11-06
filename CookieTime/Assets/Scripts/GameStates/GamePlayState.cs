@@ -15,7 +15,7 @@ namespace Game
             SceneManager.LoadSceneAsync("GamePlay").completed += async (_) =>
             {
                 _gamePlay_UI = _uiFactory.GetUI<GamePlay_UI>() as GamePlay_UI;
-                _gamePlay_UI.exitButton.onClick.AddListener(OpenMainMenu);
+                //_gamePlay_UI.exitButton.onClick.AddListener(OpenMainMenu);
             };
         }
         private void OpenMainMenu()

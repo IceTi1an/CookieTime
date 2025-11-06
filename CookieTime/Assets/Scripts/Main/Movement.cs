@@ -20,13 +20,10 @@ namespace Game
         private BoxCollider2D boxCollider;
 
         [SerializeField] private Joystick _joystick;
-        [SerializeField] private Button _jumpButton;
-        [SerializeField] private Button _crouchButton;
         [SerializeField] private float _speed = 3f;
         [SerializeField] private float _jumpForce = 5f;
         [SerializeField] private float _moveInput;
         [SerializeField] private Transform _footPosition;
-        [SerializeField] private Transform _headPosition;
         [SerializeField] private float _checkRadius = 0.3f;
         [SerializeField] private float _standUpCheckHeight = 2.0f;
         [SerializeField] private LayerMask _groundLayer;
