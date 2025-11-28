@@ -49,11 +49,6 @@ namespace Game
 
             _animator.SetFloat("Speed", Mathf.Abs(_moveInput));
 
-            if (_moveInput > 0)
-            {
-                _animator.SetBool("isRunning", true);
-            }
-
             if (facingRight == false && _moveInput > 0)
             {
                 Flip();
